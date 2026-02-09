@@ -3,73 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抖音热门弹窗效果</title>
+    <title>温馨弹窗特效</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f7fa;
             font-family: "Microsoft Yahei", sans-serif;
             overflow: hidden;
+            height: 100vh;
         }
+
+        /* 主弹窗 */
         .popup {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #foo;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
             text-align: center;
-            z-index: 100;
+            z-index: 999;
+            width: 90%;
+            max-width: 320px;
+            animation: popupShow 0.4s ease forwards;
         }
-        .popup h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .popup p {
-            margin: 10px 0;
-            color: #666;
-        }
-        .popup button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .note {
-            position: absolute;
-            padding: 10px;
-            border-radius: 6px;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-in;
-            cursor: pointer;
-        }
-        .note:hover {
-            transform: scale(1.05);
-            transition: transform 0.3s ease;
-        }
-        @keyframes fadeIn {
+
+        @keyframes popupShow {
             from {
                 opacity: 0;
-                transform: scale(0.5);
+                transform: translate(-50%, -50%) scale(0.8);
             }
             to {
                 opacity: 1;
-                transform: scale(1);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
-     
+
+        .popup h3 {
+            font-size: 20px;
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        .popup p {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .popup button {
+            background-color: #ff4d6d;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .popup button:hover {
+            background-color: #ff3355;
+            transform: scale(1.05);
+        }
+
+        /* 便签样式 */
+        .note {
+            position: absolute;
+            padding: 10px 12px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            animation: noteIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            cursor: pointer;
+            user-select: none;
+            z-index: 10;
+            font-size: 14px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .note:hover {
+            transform: scale(1.08) !important;
+            transition: transform 0.25s ease !important;
+        }
+
+        @keyframes noteIn {
+            from {
+                opacity: 0;
+                transform: scale(0.4) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
     </style>
 </head>
+
 <body>
+    <!-- 礼物弹窗 -->
     <div class="popup" id="giftPopup">
-        <h3>礼物</h3>
-        <p>您有一份礼物，确定要打开吗？</p>
-        <button id="openGift">确定</button>
+        <h3>🎁 温馨礼物</h3>
+        <p>你有一份暖心小纸条，确定打开吗？</p>
+        <button id="openGift">确认打开</button>
     </div>
 
     <script>
@@ -102,32 +146,71 @@
             "#fce6e0",
             "#f0e6f7",
             "#e0f0f7",
-            "#f7f0e0"
+            "#f7f0e0",
+            "#fff0f6",
+            "#f0f7ff"
         ];
 
-        document.getElementById("openGift").addEventListener("click", function() {
+        // 限制同时存在的便签数量，防止卡顿
+        const maxNotes = 60;
+        let noteCount = 0;
+
+        document.getElementById("openGift").addEventListener("click", function () {
             document.getElementById("giftPopup").style.display = "none";
-            setInterval(createNote, 100);
+            // 定时生成
+            setInterval(createNote, 140);
         });
 
         function createNote() {
+            // 数量限制
+            if (noteCount >= maxNotes) return;
+
             const note = document.createElement("div");
             note.className = "note";
             note.textContent = notes[Math.floor(Math.random() * notes.length)];
+            
+            // 随机背景色
             note.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            note.style.left = Math.random() * (window.innerWidth - 100) + "px";
-            note.style.top = Math.random() * (window.innerHeight - 50) + "px";
-            note.style.width = "120px";
-            document.body.appendChild(note);
+            
+            // 随机位置（留出边距，不贴边）
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const noteW = 130 + Math.random() * 40; // 随机宽度
+            const noteH = 50 + Math.random() * 20;
 
-            // 一段时间后移除元素
-            setTimeout(function() {
-                note.style.opacity = "0";
-                note.style.transition = "opacity 0.5s ease";
-                setTimeout(function() {
-                    document.body.removeChild(note);
-                }, 500);
-            }, 5000);
+            note.style.width = noteW + "px";
+            note.style.minHeight = noteH + "px";
+            note.style.left = Math.random() * (w - noteW - 20) + 10 + "px";
+            note.style.top = Math.random() * (h - noteH - 20) + 10 + "px";
+
+            // 轻微随机旋转
+            const rot = (Math.random() - 0.5) * 6;
+            note.style.transform = `rotate(${rot}deg)`;
+
+            document.body.appendChild(note);
+            noteCount++;
+
+            // 点击便签直接消失
+            note.addEventListener("click", () => {
+                removeNote(note);
+            });
+
+            // 自动消失
+            setTimeout(() => {
+                removeNote(note);
+            }, 6000);
+        }
+
+        // 统一移除函数
+        function removeNote(note) {
+            if (!note) return;
+            note.style.opacity = "0";
+            note.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+            note.style.transform += " scale(0.8)";
+            setTimeout(() => {
+                if (note.parentNode) note.parentNode.removeChild(note);
+                noteCount = Math.max(0, noteCount - 1);
+            }, 400);
         }
     </script>
 </body>
