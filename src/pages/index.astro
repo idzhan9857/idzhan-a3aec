@@ -1,774 +1,134 @@
-<！doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<元名称=“视口”内容=“宽度=设备宽度，初始比例=1.0”>
-<title>抖音热门弹窗效果-优化版</title>
-<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-* {
-页边距：0；
-填充：0；
-框大小：边框框；
-        }
-        
-正文{
-字体系列：“平方SC”、“微软雅黑”、“Helvetica Neue”、Arial、sans-serif；
-背景：线性梯度(135度，#6a11cb 0%，#2575fc100%)；
-最低高度：100vh；
-显示：柔性；
-对齐-内容：居中；
-对齐项：居中；
-溢出：隐藏；
-位置：相对；
-        }
-        
-/* 背景装饰元素 */
-.bg-decoration{
-位置：绝对；
-宽度：100%；
-高度：100%；
-溢出：隐藏；
-Z指数：1；
-        }
-        
-.圆圈{
-位置：绝对；
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 20s infinite linear;
-        }
-        
-        .circle:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-        
-        .circle:nth-child(2) {
-            width: 120px;
-            height: 120px;
-            top: 60%;
-            right: 10%;
-            animation-delay: 5s;
-        }
-        
-        .circle:nth-child(3) {
-            width: 60px;
-            height: 60px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 10s;
-        }
-        
-        .circle:nth-child(4) {
-            width: 100px;
-            height: 100px;
-            top: 20%;
-            right: 20%;
-            animation-delay: 15s;
-        }
-        
-        /* 弹窗容器 */
-        .popup-container {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-        }
-        
-        /* 礼物弹窗 */
-        .gift-popup {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖音热门弹窗效果</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: "Microsoft Yahei", sans-serif;
             overflow: hidden;
-            transform: scale(0.9);
-            opacity: 0;
-            animation: popupAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            animation-delay: 0.3s;
         }
-        
-        /* 礼物盒 */
-        .gift-box {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
-            position: relative;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            transition: transform 0.5s ease;
-        }
-        
-        .gift-box:hover {
-            transform: rotateY(10deg) rotateX(5deg);
-        }
-        
-        .box-lid {
-            width: 120px;
-            height: 40px;
-            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-            border-radius: 10px 10px 0 0;
-            position: absolute;
-            top: 0;
-            z-index: 2;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-        }
-        
-        .box-body {
-            width: 120px;
-            height: 80px;
-            background: linear-gradient(135deg, #ff8e53, #ffd166);
-            border-radius: 0 0 10px 10px;
-            position: absolute;
-            top: 40px;
-            box-shadow: 0 5px 15px rgba(255, 142, 83, 0.4);
-        }
-        
-        .ribbon {
-            position: absolute;
-            width: 20px;
-            height: 100px;
-            background: #4ecdc4;
-            top: 0;
+        .popup {
+            position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            z-index: 3;
-            border-radius: 10px;
+            transform: translate(-50%, -50%);
+            background-color: #foo;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 100;
         }
-        
-        .ribbon:before, .ribbon:after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 30px;
-            background: #4ecdc4;
-            border-radius: 10px;
-        }
-        
-        .ribbon:before {
-            top: -15px;
-            left: 0;
-        }
-        
-        .ribbon:after {
-            bottom: -15px;
-            left: 0;
-        }
-        
-        /* 弹窗内容 */
-        .popup-title {
+        .popup h3 {
+            margin-top: 0;
             color: #333;
-            font-size: 28px;
-            margin-bottom: 15px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
-        
-        .popup-message {
+        .popup p {
+            margin: 10px 0;
             color: #666;
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
         }
-        
-        /* 按钮样式 */
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .popup button {
+            background-color: #007bff;
+            color: #fff;
             border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        
-        .btn-open {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-        }
-        
-        .btn-open:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(106, 17, 203, 0.4);
-        }
-        
-        .btn-open:active {
-            transform: translateY(0);
-        }
-        
-        .btn-close {
-            background: white;
-            color: #666;
-            border: 2px solid #eee;
-        }
-        
-        .btn-close:hover {
-            background: #f8f9fa;
-            transform: translateY(-5px);
-        }
-        
-        /* 提示卡片 */
         .note {
             position: absolute;
-            padding: 20px 15px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            animation: noteAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in;
             cursor: pointer;
-            z-index: 5;
-            max-width: 180px;
-            text-align: center;
-            font-weight: 500;
-            line-height: 1.4;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0;
         }
-        
         .note:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            z-index: 20;
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
         }
-        
-        .note-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        /* 动画 */
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-20px) rotate(90deg);
-            }
-            50% {
-                transform: translateY(0) rotate(180deg);
-            }
-            75% {
-                transform: translateY(20px) rotate(270deg);
-            }
-        }
-        
-        @keyframes popupAppear {
-            0% {
-                transform: scale(0.9);
+        @keyframes fadeIn {
+            from {
                 opacity: 0;
+                transform: scale(0.5);
             }
-            100% {
+            to {
+                opacity: 1;
                 transform: scale(1);
-                opacity: 1;
             }
         }
-        
-        @keyframes noteAppear {
-            0% {
-                transform: scale(0.5) rotate(-10deg);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes noteFloat {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            25% {
-                transform: translateY(-5px) rotate(-1deg);
-            }
-            50% {
-                transform: translateY(0) rotate(0deg);
-            }
-            75% {
-                transform: translateY(5px) rotate(1deg);
-            }
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-        }
-        
-        @keyframes noteDisappear {
-            0% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(0.5) rotate(20deg);
-                opacity: 0;
-            }
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .popup-container {
-                padding: 15px;
-            }
-            
-            .gift-popup {
-                padding: 30px 20px;
-            }
-            
-            .popup-title {
-                font-size: 24px;
-            }
-            
-            .popup-message {
-                font-size: 16px;
-            }
-            
-            .btn-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-        }
-        
-        /* 隐藏类 */
-        .hidden {
-            display: none;
-        }
-        
-        /* 音乐播放器 */
-        .music-player {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .music-player:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .music-icon {
-            font-size: 20px;
-        }
-        
-        .music-text {
-            font-size: 14px;
-        }
-        
-        /* 计数显示 */
-        .counter {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 10px 20px;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
+     
     </style>
 </head>
 <body>
-    <!-- 背景装饰 -->
-    <div class="bg-decoration">
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
+    <div class="popup" id="giftPopup">
+        <h3>礼物</h3>
+        <p>您有一份礼物，确定要打开吗？</p>
+        <button id="openGift">确定</button>
     </div>
-    
-    <!-- 音乐播放器 -->
-    <div class="music-player" id="musicToggle">
-        <i class="fas fa-music music-icon"></i>
-        <span class="music-text">播放音乐</span>
-    </div>
-    
-    <!-- 计数显示 -->
-    <div class="counter">
-        已收到 <span id="noteCount">0</span> 条祝福
-    </div>
-    
-    <!-- 弹窗容器 -->
-    <div class="popup-container">
-        <div class="gift-popup" id="giftPopup">
-            <!-- 礼物盒 -->
-            <div class="gift-box" id="giftBox">
-                <div class="box-lid"></div>
-                <div class="box-body"></div>
-                <div class="ribbon"></div>
-            </div>
-            
-            <h2 class="popup-title">🎁 您有一份特别的礼物</h2>
-            <p class="popup-message">点击礼物盒或下面的按钮，接收今日份的温暖祝福</p>
-            
-            <div class="btn-container">
-                <button class="btn btn-open" id="openGift">
-                    <i class="fas fa-gift"></i>
-                    打开礼物
-                </button>
-                <button class="btn btn-close" id="closeGift">
-                    <i class="fas fa-times"></i>
-                    稍后打开
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 音频元素 -->
-    <audio id="bgMusic" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-day-583.mp3" type="audio/mpeg">
-    </audio>
-    
+
     <script>
-        // 祝福语数组
         const notes = [
-            {text: "要相信自己奥", icon: "💪", color: "#FFE5EC"},
-            {text: "多喝水哦~", icon: "💧", color: "#E3F2FD"},
-            {text: "早点休息", icon: "🌙", color: "#E8F5E9"},
-            {text: "梦想成真", icon: "✨", color: "#FFF3E0"},
-            {text: "记得吃水果", icon: "🍎", color: "#FCE4EC"},
-            {text: "你超棒的", icon: "🌟", color: "#E8F5E9"},
-            {text: "好好爱自己", icon: "❤️", color: "#FFEBEE"},
-            {text: "每天都要元气满满", icon: "☀️", color: "#FFF3E0"},
-            {text: "学会爱自己，才能更好地爱别人", icon: "💕", color: "#F3E5F5"},
-            {text: "金榜题名", icon: "🏆", color: "#E8F5E9"},
-            {text: "别太累啦，偶尔偷懒也好", icon: "😴", color: "#E0F2F1"},
-            {text: "天冷了，多穿衣服", icon: "🧥", color: "#E3F2FD"},
-            {text: "顺顺利利", icon: "🍀", icon: "🍀", color: "#F1F8E9"},
-            {text: "保持微笑呀", icon: "😊", color: "#FFF8E1"},
-            {text: "保持好心情", icon: "😄", color: "#E8F5E9"},
-            {text: "我想你了", icon: "💌", color: "#FCE4EC"},
-            {text: "珍惜每一刻", icon: "⏳", color: "#F3E5F5"},
-            {text: "今天过得开心嘛", icon: "🤔", color: "#E1F5FE"},
-            {text: "期待下一次见面", icon: "👋", color: "#F3E5F5"},
-            {text: "别熬夜", icon: "😪", color: "#E0F2F1"},
-            {text: "我喜欢你❤️", icon: "💖", color: "#FFEBEE"}
+            "要相信自己奥",
+            "多喝水哦~",
+            "早点休息",
+            "梦想成真",
+            "记得吃水果",
+            "你超棒的",
+            "好好爱自己",
+            "每天都要元气满满",
+            "学会爱自己，才能更好地爱别人",
+            "金榜题名",
+            "别太累啦，偶尔偷懒也好",
+            "天冷了，多穿衣服",
+            "顺顺利利",
+            "保持微笑呀",
+            "保持好心情",
+            "我想你了",
+            "珍惜每一刻",
+            "今天过得开心嘛",
+            "期待下一次见面",
+            "别熬夜",
+            "我喜欢你❤️"
         ];
-        
-        // 祝福卡片颜色数组
-        const noteColors = [
-            "#FFE5EC", "#E3F2FD", "#E8F5E9", "#FFF3E0", "#FCE4EC",
-            "#E0F2F1", "#F3E5F5", "#F1F8E9", "#FFF8E1", "#E1F5FE"
+
+        const colors = [
+            "#e6f7f0",
+            "#fce6e0",
+            "#f0e6f7",
+            "#e0f0f7",
+            "#f7f0e0"
         ];
-        
-        // 获取DOM元素
-        const giftPopup = document.getElementById('giftPopup');
-        const giftBox = document.getElementById('giftBox');
-        const openGiftBtn = document.getElementById('openGift');
-        const closeGiftBtn = document.getElementById('closeGift');
-        const musicToggle = document.getElementById('musicToggle');
-        const bgMusic = document.getElementById('bgMusic');
-        const noteCountElement = document.getElementById('noteCount');
-        const body = document.body;
-        
-        // 变量初始化
-        let noteCount = 0;
-        let isMusicPlaying = false;
-        let noteInterval;
-        let isGiftOpened = false;
-        
-        // 初始化事件监听
-        function initEventListeners() {
-            // 点击礼物盒
-            giftBox.addEventListener('click', openGift);
-            
-            // 点击打开礼物按钮
-            openGiftBtn.addEventListener('click', openGift);
-            
-            // 点击关闭按钮
-            closeGiftBtn.addEventListener('click', function() {
-                giftPopup.style.animation = 'noteDisappear 0.5s ease forwards';
-                setTimeout(() => {
-                    giftPopup.classList.add('hidden');
-                    showSurpriseMessage();
-                }, 500);
-            });
-            
-            // 音乐切换
-            musicToggle.addEventListener('click', toggleMusic);
-            
-            // 点击页面任意位置（除了弹窗）可以创建祝福卡片
-            document.addEventListener('click', function(e) {
-                // 如果礼物已经打开，并且点击的不是弹窗区域
-                if (isGiftOpened && !e.target.closest('.gift-popup')) {
-                    createFloatingNote(e.clientX, e.clientY);
-                }
-            });
-            
-            // 初始加载时播放一点动画
-            setTimeout(() => {
-                giftBox.style.transform = 'rotateY(15deg)';
-                setTimeout(() => {
-                    giftBox.style.transform = 'rotateY(-15deg)';
-                    setTimeout(() => {
-                        giftBox.style.transform = 'rotateY(0deg)';
-                    }, 300);
-                }, 300);
-            }, 1000);
-        }
-        
-        // 打开礼物
-        function openGift() {
-            if (isGiftOpened) return;
-            
-            isGiftOpened = true;
-            
-            // 播放开箱动画
-            giftBox.style.transition = 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.5)';
-            giftBox.style.transform = 'translateY(-20px) scale(1.2) rotateY(180deg)';
-            
-            // 播放音效
-            playOpenSound();
-            
-            // 开始创建浮动卡片
-            setTimeout(() => {
-                // 隐藏弹窗
-                giftPopup.classList.add('hidden');
-                
-                // 开始定时创建卡片
-                noteInterval = setInterval(createRandomNote, 200);
-                
-                // 10秒后停止自动创建
-                setTimeout(() => {
-                    clearInterval(noteInterval);
-                }, 10000);
-                
-                // 显示提示信息
-                showOpeningMessage();
-            }, 800);
-        }
-        
-        // 创建随机位置的祝福卡片
-        function createRandomNote() {
-            const x = Math.random() * (window.innerWidth - 180);
-            const y = Math.random() * (window.innerHeight - 120);
-            createFloatingNote(x, y);
-        }
-        
-        // 在指定位置创建祝福卡片
-        function createFloatingNote(x, y) {
-            const note = document.createElement('div');
-            note.className = 'note';
-            
-            // 随机选择一条祝福语
-            const noteData = notes[Math.floor(Math.random() * notes.length)];
-            
-            // 随机选择颜色
-            const color = noteColors[Math.floor(Math.random() * noteColors.length)];
-            
-            // 设置卡片内容
-            note.innerHTML = `<div class="note-icon">${noteData.icon}</div><div>${noteData.text}</div>`;
-            
-            // 设置样式
-            note.style.backgroundColor = color;
-            note.style.left = x + 'px';
-            note.style.top = y + 'px';
-            
-            // 随机大小
-            const size = 0.8 + Math.random() * 0.4;
-            note.style.transform = `scale(${size})`;
-            
-            // 随机旋转
-            const rotation = -10 + Math.random() * 20;
-            note.style.transform += ` rotate(${rotation}deg)`;
-            
-            // 添加浮动动画
-            note.style.animation = `noteAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, noteFloat 3s infinite ease-in-out`;
-            note.style.animationDelay = '0s, 0.5s';
-            
-            // 添加到页面
+
+        document.getElementById("openGift").addEventListener("click", function() {
+            document.getElementById("giftPopup").style.display = "none";
+            setInterval(createNote, 100);
+        });
+
+        function createNote() {
+            const note = document.createElement("div");
+            note.className = "note";
+            note.textContent = notes[Math.floor(Math.random() * notes.length)];
+            note.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            note.style.left = Math.random() * (window.innerWidth - 100) + "px";
+            note.style.top = Math.random() * (window.innerHeight - 50) + "px";
+            note.style.width = "120px";
             document.body.appendChild(note);
-            
-            // 更新计数
-            noteCount++;
-            noteCountElement.textContent = noteCount;
-            
-            // 点击卡片移除
-            note.addEventListener('click', function() {
-                this.style.animation = 'noteDisappear 0.5s ease forwards';
-                setTimeout(() => {
-                    if (this.parentNode) {
-                        this.parentNode.removeChild(this);
-                    }
+
+            // 一段时间后移除元素
+            setTimeout(function() {
+                note.style.opacity = "0";
+                note.style.transition = "opacity 0.5s ease";
+                setTimeout(function() {
+                    document.body.removeChild(note);
                 }, 500);
-            });
-            
-            // 5秒后自动移除
-            setTimeout(() => {
-                if (note.parentNode) {
-                    note.style.animation = 'noteDisappear 0.5s ease forwards';
-                    setTimeout(() => {
-                        if (note.parentNode) {
-                            note.parentNode.removeChild(note);
-                        }
-                    }, 500);
-                }
             }, 5000);
         }
-        
-        // 播放开箱音效
-        function playOpenSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
-                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.3); // C6
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.5);
-            } catch (e) {
-                console.log("音频上下文不支持，但不会影响功能");
-            }
-        }
-        
-        // 切换音乐
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                musicToggle.innerHTML = '<i class="fas fa-music music-icon"></i><span class="music-text">播放音乐</span>';
-            } else {
-                bgMusic.play().catch(e => {
-                    console.log("自动播放被阻止，请手动点击播放");
-                    musicToggle.innerHTML = '<i class="fas fa-play music-icon"></i><span class="music-text">点击播放音乐</span>';
-                });
-                musicToggle.innerHTML = '<i class="fas fa-pause music-icon"></i><span class="music-text">暂停音乐</span>';
-            }
-            isMusicPlaying = !isMusicPlaying;
-        }
-        
-        // 显示开箱提示
-        function showOpeningMessage() {
-            const message = document.createElement('div');
-            message.className = 'note';
-            message.innerHTML = '<div class="note-icon">🎉</div><div>礼物已打开！<br>点击屏幕任意位置接收更多祝福</div>';
-            message.style.backgroundColor = '#FFE5EC';
-            message.style.left = '50%';
-message.style.top='50%'；
-message.style.transform='translate(-50%，-50%)'；
-message.style.zIndex='100'；
-message.style.textAlign='center'；
-            
-document.body.appendChild(message)；
-            
-// 3秒后移除提示
-setTimeout(()=>{
-message.style.animation='注意消失0.5秒缓进'；
-setTimeout(()=>{
-if(message.parentNode){
-message.parentNode.removeChild(message)；
-                    }
-}, 500);
-}, 3000);
-        }
-        
-// 显示稍后打开的惊喜消息
-函数showSurpriseMessage(){
-setTimeout(()=>{
-Const message=document.createElement('div')；
-message.className='note'；
-message.innerHTML='<div class="note-icon">💖</div><div>礼物为您保留着<br>随时可以回来打开</div>'；
-message.style.backgroundColor='#E3F2FD'；
-message.style.left='50%'；
-message.style.top='50%'；
-消息。风格。transform='translate(-50%，-50%)'；
-message.style.zIndex='100'；
-message.style.textAlign='center'；
-                
-document.body.appendChild(message)；
-                
-// 3秒后移除提示
-setTimeout(()=>{
-message.style.animation='注意消失0.5秒缓进'；
-setTimeout(()=>{
-if(message.parentNode){
-message.parentNode.removeChild(message)；
-                        }
-}, 500);
-}, 3000);
-}, 500);
-        }
-        
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded'，函数(){
-initEventListeners()；
-            
-// 添加键盘快捷键
-document.addEventListener('keydown'，函数(e){
-// 空格键打开礼物
-if(e.code==='Space'&&！isGiftOpened){
-e.preventDefault()；
-openGift()；
-                }
-                
-//ESC键关闭弹窗
-if(e.code==='Escape'&&！isGiftOpened){
-closeGiftBtn.click()；
-                }
-                
-//M键切换音乐
-if(e.code==='Keym'){
-toggleMusic()；
-                }
-            });
-            
-// 添加触摸设备支持
-document.addEventListener('touchstart'，函数(e){
-if(isGiftOpened&&e.touches.length>0){
-Const touch=e.touches[0]；
-createFloatingNote(触摸.ClientX，触摸.客户)；
-                }
-            });
-        });
-</script>
+    </script>
 </body>
 </html>
