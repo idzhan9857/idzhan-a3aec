@@ -1,217 +1,249 @@
+---
+// Astro 前端组件，无服务端逻辑，纯客户端特效
+---
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>温馨弹窗特效</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抖音爆款·暖心祝福飘落特效</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background-color: #f5f7fa;
-            font-family: "Microsoft Yahei", sans-serif;
-            overflow: hidden;
-            height: 100vh;
-        }
+    body {
+      background: linear-gradient(135deg, #ffeff6, #f0f9ff);
+      font-family: "Microsoft Yahei", sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      cursor: pointer;
+    }
 
-        /* 主弹窗 */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 30px 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            text-align: center;
-            z-index: 999;
-            width: 90%;
-            max-width: 320px;
-            animation: popupShow 0.4s ease forwards;
-        }
+    /* 初始弹窗 */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 35px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(255, 109, 151, 0.2);
+      text-align: center;
+      z-index: 9999;
+      width: 90%;
+      max-width: 340px;
+      animation: popupPop 0.5s ease forwards;
+    }
 
-        @keyframes popupShow {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
+    @keyframes popupPop {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
 
-        .popup h3 {
-            font-size: 20px;
-            color: #222;
-            margin-bottom: 12px;
-        }
+    .popup h3 {
+      font-size: 22px;
+      color: #ff4d8f;
+      margin-bottom: 12px;
+    }
 
-        .popup p {
-            font-size: 15px;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
+    .popup p {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
 
-        .popup button {
-            background-color: #ff4d6d;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 15px;
-            transition: all 0.2s ease;
-        }
+    .popup button {
+      background: linear-gradient(90deg, #ff6b9d, #ff4d8f);
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-        .popup button:hover {
-            background-color: #ff3355;
-            transform: scale(1.05);
-        }
+    .popup button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 5px 15px rgba(255, 77, 143, 0.3);
+    }
 
-        /* 便签样式 */
-        .note {
-            position: absolute;
-            padding: 10px 12px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            animation: noteIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-            cursor: pointer;
-            user-select: none;
-            z-index: 10;
-            font-size: 14px;
-            line-height: 1.4;
-            text-align: center;
-        }
+    /* 音乐控制按钮 */
+    .music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+对齐项：居中；
+对齐-内容：居中；
+box-shadow:03px10px rgba(0,0,0,0.1);
+光标：指针；
+      z-index: 999;
+      font-size: 18px;
+    }
 
-        .note:hover {
-            transform: scale(1.08) !important;
-            transition: transform 0.25s ease !important;
-        }
+    /* 便签 + 飘落动画 */
+    .note {
+      position: absolute;
+      top: -80px;
+      padding: 12px 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.4;
+      user-select: none;
+      z-index: 10;
+      animation: floatDown linear forwards;
+    }
 
-        @keyframes noteIn {
-            from {
-                opacity: 0;
-                transform: scale(0.4) rotate(-5deg);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
-        }
-    </style>
+    .note:hover {
+      transform: scale(1.1) !important;
+      transition: transform 0.3s ease;
+    }
+
+    @keyframes floatDown {
+      0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+      50%  { transform: translateX(calc(var(--shift) * 1px)) rotate(calc(var(--rot) * 1deg)); }
+      100% { transform: translateX(calc(var(--shift) * 1px)) rotate(calc(var(--rot) * 1deg)); opacity: 0; top: 105vh; }
+    }
+
+    /* 爱心/星星粒子 */
+    .particle {
+      position: absolute;
+      top: -30px;
+      font-size: 20px;
+      z-index: 5;
+      animation: floatDown linear forwards;
+      user-select: none;
+    }
+  </style>
 </head>
-
 <body>
-    <!-- 礼物弹窗 -->
-    <div class="popup" id="giftPopup">
-        <h3>🎁 温馨礼物</h3>
-        <p>你有一份暖心小纸条，确定打开吗？</p>
-        <button id="openGift">确认打开</button>
-    </div>
 
-    <script>
-        const notes = [
-            "要相信自己奥",
-            "多喝水哦~",
-            "早点休息",
-            "梦想成真",
-            "记得吃水果",
-            "你超棒的",
-            "好好爱自己",
-            "每天都要元气满满",
-            "学会爱自己，才能更好地爱别人",
-            "金榜题名",
-            "别太累啦，偶尔偷懒也好",
-            "天冷了，多穿衣服",
-            "顺顺利利",
-            "保持微笑呀",
-            "保持好心情",
-            "我想你了",
-            "珍惜每一刻",
-            "今天过得开心嘛",
-            "期待下一次见面",
-            "别熬夜",
-            "我喜欢你❤️"
-        ];
+  <!-- 弹窗 -->
+  <div class="popup" id="giftPopup">
+    <h3>🎁 专属暖心礼物</h3>
+    <p>打开后会有满屏温柔祝福飘落<br>点击任意位置可生成更多哦</p>
+    <button id="openGift">开启惊喜</button>
+  </div>
 
-        const colors = [
-            "#e6f7f0",
-            "#fce6e0",
-            "#f0e6f7",
-            "#e0f0f7",
-            "#f7f0e0",
-            "#fff0f6",
-            "#f0f7ff"
-        ];
+  <!-- 音乐开关 -->
+  <div class="music-btn" id="musicBtn" title="背景音乐">🎵</div>
 
-        // 限制同时存在的便签数量，防止卡顿
-        const maxNotes = 60;
-        let noteCount = 0;
+  <script is:inline>
+    // 文案
+    const notes = [
+      "要相信自己奥", "多喝水哦~", "早点休息", "梦想成真",
+      "记得吃水果", "你超棒的", "好好爱自己", "每天都要元气满满",
+      "学会爱自己", "金榜题名", "别太累啦", "天冷多穿衣",
+      "顺顺利利", "保持微笑", "保持好心情", "我想你了",
+      "珍惜每一刻", "今天开心吗", "期待见面", "别熬夜", "我喜欢你❤️"
+    ];
 
-        document.getElementById("openGift").addEventListener("click", function () {
-            document.getElementById("giftPopup").style.display = "none";
-            // 定时生成
-            setInterval(createNote, 140);
-        });
+    const colors = [
+      "#ffe6f0","#e6f7ff","#f0fff4","#fff7e6","#f6f0ff"
+    ];
 
-        function createNote() {
-            // 数量限制
-            if (noteCount >= maxNotes) return;
+    const particles = ["❤️", "✨", "⭐", "💖", "🌟", "💕"];
 
-            const note = document.createElement("div");
-            note.className = "note";
-            note.textContent = notes[Math.floor(Math.random() * notes.length)];
-            
-            // 随机背景色
-            note.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            // 随机位置（留出边距，不贴边）
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            const noteW = 130 + Math.random() * 40; // 随机宽度
-            const noteH = 50 + Math.random() * 20;
+    // 背景音乐
+    const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c54b5a0e.mp3");
+    audio.loop = true;
+    let musicOn = true;
 
-            note.style.width = noteW + "px";
-            note.style.minHeight = noteH + "px";
-            note.style.left = Math.random() * (w - noteW - 20) + 10 + "px";
-            note.style.top = Math.random() * (h - noteH - 20) + 10 + "px";
+    document.getElementById("musicBtn").onclick = () => {
+      if (musicOn) { audio.pause(); musicOn = false; }
+      else { audio.play(); musicOn = true; }
+    };
 
-            // 轻微随机旋转
-            const rot = (Math.random() - 0.5) * 6;
-            note.style.transform = `rotate(${rot}deg)`;
+    // 上限控制
+    const maxNotes = 80;
+    let noteCount = 0;
 
-            document.body.appendChild(note);
-            noteCount++;
+    // 创建便签
+函数createNote(){
+if(noteccount>=maxNotes)返回；
 
-            // 点击便签直接消失
-            note.addEventListener("click", () => {
-                removeNote(note);
-            });
+Const note=document.createElement("div")；
+note.className="note"；
+笔记。内部文本=注释[数学下限(数学random()*注。长度)]；
+笔记。风格。背景=颜色[Math.Floor(Math.Random()*颜色。长度)]；
 
-            // 自动消失
-            setTimeout(() => {
-                removeNote(note);
-            }, 6000);
-        }
+Const w=130+Math.random()*40；
+Const left=Math.random()*(window.innerWidth-w)；
+Const dur=10+Math.random()*8；
+常数shift=(Math.random()-0.5)*120；
+常数rot=(Math.random()-0.5)*12；
 
-        // 统一移除函数
-        function removeNote(note) {
-            if (!note) return;
-            note.style.opacity = "0";
-            note.style.transition = "opacity 0.4s ease, transform 0.4s ease";
-            note.style.transform += " scale(0.8)";
-            setTimeout(() => {
-                if (note.parentNode) note.parentNode.removeChild(note);
-                noteCount = Math.max(0, noteCount - 1);
-            }, 400);
-        }
-    </script>
+note.style.setProperty("--shift"，shift)；
+note.style.setProperty("--rot"，rot)；
+note.style.width=w+"px"；
+notes.style.left=left+"px"；
+note.style.animationDuration=dur+"s"；
+
+document.body.appendChild(note)；
+noteccount++；
+
+setTimeout(()=>{
+note.remove()；
+noteccount=Math.max(0，noteccount-1)；
+}，dur*1000)；
+    }
+
+// 创建粒子
+函数createParticle(){
+Const p=document.createElement("div")；
+p.className="粒子"；
+p。内文=粒子[Math.Floor(Math.Random()*粒子.长度)]；
+
+Const left=Math.random()*window.innerWidth；
+Const dur=8+Math.random()*6；
+常数shift=(Math.random()-0.5)*80；
+常数rot=(Math.random()-0.5)*20；
+
+p.style.setProperty("--shift"，shift)；
+p.style.setProperty("--rot"，rot)；
+p.style.left=left+"px"；
+p.style.animationDuration=dur+"s"；
+
+document.body.appendChild(p)；
+setTimeout(()=>p.remove()，dur*1000)；
+    }
+
+// 自动生成
+函数startEffect(){
+setInterval(()=>{
+createNote()；
+如果(Math.random()>0.4)createParticle()；
+}, 160);
+    }
+
+// 点击生成更多
+document.body.onclick=(e)=>{
+if(e.target.closest("#giftPopup"))返回；
+for(让i=0；i<3；i++)创建Note()；
+对于(让i=0；i<2；i++)createParticle()；
+    };
+
+// 开启
+文件。getElementById("openGift").onclick=()=>{
+文件。getElementById("giftPopup")。风格。显示="无"；
+if(MUSICON)audio.play().catch(()=>{})；
+startEffect()；
+    };
+</script>
+
 </body>
 </html>
+
